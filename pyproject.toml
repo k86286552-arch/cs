@@ -1,0 +1,8 @@
+[project]
+name = "mineral-daily-agent"
+version = "0.1.0"
+description = "Mining daily brief agent with MCP servers"
+requires-python = ">=3.11"
+dependencies = [
+    "mcp[cli]>=1.0",
+]

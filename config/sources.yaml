@@ -1,0 +1,40 @@
+news:
+  rss_feeds:
+    - name: "MINING.COM"
+      url: "https://www.mining.com/feed/"
+      category: general
+    - name: "Mining Weekly"
+      url: "https://www.miningweekly.com/page/rss"
+      category: general
+    - name: "Reuters Mining"
+      url: "https://www.reuters.com/arc/outboundfeeds/v3/latest/section/mining/?outputType=xml"
+      category: general
+
+  scrape_domains:
+    - "mining.com"
+    - "miningweekly.com"
+    - "reuters.com"
+    - "bloomberg.com"
+
+  request_headers:
+    User-Agent: "MineralDailyAgent/0.1 (research-bot)"
+
+price:
+  providers:
+    - name: fixture
+      type: csv_fixture
+      path: "data/fixtures/prices.csv"
+      priority: 0
+    - name: lme
+      type: lme_api
+      base_url: "https://api.lme.com/v1"
+      priority: 10
+
+pdf:
+  max_file_size_mb: 50
+  max_pages: 500
+  cache_dir: "data/cache"
+  extractors:
+    - pymupdf
+    - pdfplumber
+    - camelot

@@ -1,0 +1,44 @@
+projects:
+  pilgangoora:
+    display_name: Pilgangoora Operation
+    company: Pilbara Minerals
+    aliases:
+      - Pilbara
+      - Pilbara lithium
+      - Pilbara Minerals
+      - Pilgangoora
+      - PLS
+      - "Pilbara 锂矿"
+      - "Pilbara 矿业"
+    commodities:
+      - lithium
+    country: Australia
+    region: Western Australia
+    news_queries:
+      - "Pilbara Minerals lithium"
+      - "Pilgangoora lithium"
+    price_benchmark:
+      commodity: lithium_carbonate
+      benchmark: configured_lithium_benchmark
+    technical_reports:
+      - title: "Pilbara Minerals Annual Report 2025"
+        effective_date: "2025-06-30"
+        url: "https://pls.com/wp-content/uploads/2025/08/2025AnnualReportincorporatingAppendix4E.pdf"
+
+  escondida:
+    display_name: Escondida Mine
+    company: BHP
+    aliases:
+      - Escondida
+      - BHP Escondida
+    commodities:
+      - copper
+    country: Chile
+    region: Atacama
+    news_queries:
+      - "BHP Escondida copper"
+      - "Escondida mine"
+    price_benchmark:
+      commodity: copper
+      benchmark: "LME Copper Official"
+    technical_reports: []

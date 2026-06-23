@@ -1,0 +1,65 @@
+# {{ project_name }} / {{ company_name }} 今日简报
+
+> 报告日期: {{ report_date }}
+
+## 1. 结论摘要
+{{ summary }}
+
+## 2. 新闻摘要
+{% if news_status in ["error", "unavailable"] %}
+本次未获得可验证的新闻数据，因此不对新闻趋势作结论。
+{% elif news_items %}
+{% for item in news_items %}
+- {{ item.content[:200] }} [{{ item.evidence_id }}]{% if item.source_url %} ([来源]({{ item.source_url }})){% endif %}
+
+{% endfor %}
+{% else %}
+本日未检索到相关新闻。
+{% endif %}
+
+## 3. 储量数据
+{% if resource_status in ["error", "unavailable"] %}
+本次未获得可验证的储量数据，因此不对储量作结论。
+{% elif resource_rows %}
+| 类别 | 矿石量 | 品位 | 含金属量 | 页码 | 证据 |
+| --- | --- | --- | --- | --- | --- |
+{% for row in resource_rows %}
+| {{ row.category }} | {{ row.ore_tonnage }} {{ row.ore_tonnage_unit }} | {{ row.grade }} {{ row.grade_unit }} | {{ row.contained_metal or "-" }} | {{ row.page_number or "-" }} | R{{ loop.index }} |
+{% endfor %}
+{% else %}
+未提取到储量数据。
+{% endif %}
+
+## 4. 价格走势
+{% if price_status in ["error", "unavailable"] %}
+本次未获得可验证的价格数据，因此不对短期价格趋势作结论。
+{% elif trend %}
+- 过去 {{ trend.period.days }} 天价格变动: {{ "%.2f"|format(trend.change_percent) }}%
+- 起始价: {{ trend.start_price }} → 当前价: {{ trend.end_price }} {{ trend.currency }}/{{ trend.unit }}
+- 区间最低: {{ trend.min_price }} / 最高: {{ trend.max_price }}
+- 数据源: {{ trend.source }}
+{% if trend.is_demo %}- ⚠ 使用的是演示数据 (fixture){% endif %}
+{% else %}
+暂无可用价格数据。
+{% endif %}
+
+## 5. 风险提示
+{% if risks %}
+{% for risk in risks %}
+- {{ {"high": "🔴", "medium": "🟡", "low": "🟢"}.get(risk.severity, "") }} {{ risk.description }}{% if risk.evidence_ids %} [{{ risk.evidence_ids | join(", ") }}]{% endif %}
+
+{% endfor %}
+{% else %}
+- 本日未检测到显著风险信号。
+{% endif %}
+
+## 6. 引用
+{% for item in evidence %}
+{% if item.evidence_type == "news" %}
+- [{{ item.evidence_id }}] {{ item.title }} — {{ item.source_url }}
+{% elif item.evidence_type == "resource" %}
+- [{{ item.evidence_id }}] Technical Report p.{{ item.page_number or "?" }}
+{% elif item.evidence_type == "price" %}
+- [{{ item.evidence_id }}] {{ item.metadata.get("date", "") }} {{ item.metadata.get("commodity", "") }}, {{ item.metadata.get("currency", "") }}/{{ item.metadata.get("unit", "") }}
+{% endif %}
+{% endfor %}

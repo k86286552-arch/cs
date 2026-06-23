@@ -1,0 +1,47 @@
+rules:
+  - id: price_drop_significant
+    description: "Significant price drop detected"
+    condition: "price_change_percent < -5"
+    severity: high
+    template: "{commodity} price dropped {change_percent}% over the past {days} days, from {start_price} to {end_price} {currency}/{unit}."
+
+  - id: price_rise_significant
+    description: "Significant price rise detected"
+    condition: "price_change_percent > 10"
+    severity: medium
+    template: "{commodity} price rose {change_percent}% over the past {days} days."
+
+  - id: news_negative_sentiment
+    description: "Negative news detected"
+    condition: "negative_keywords in news"
+    severity: medium
+    keywords:
+      - shutdown
+      - suspension
+      - accident
+      - strike
+      - lawsuit
+      - penalty
+      - downgrade
+      - cut
+      - reduce
+      - delay
+    template: "Negative news detected: {title}"
+
+  - id: resource_low_confidence
+    description: "Low confidence resource extraction"
+    condition: "resource_confidence < 0.7"
+    severity: low
+    template: "Resource data for {deposit_name} has low extraction confidence ({confidence})."
+
+  - id: data_source_demo
+    description: "Using demo/fixture data"
+    condition: "is_demo == true"
+    severity: low
+    template: "Price data is sourced from demo fixtures, not live market data."
+
+  - id: missing_data_section
+    description: "A data section is unavailable"
+    condition: "section_status == unavailable"
+    severity: medium
+    template: "Section '{section}' data could not be retrieved: {reason}."

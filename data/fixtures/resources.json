@@ -1,0 +1,59 @@
+[
+  {
+    "report": {
+      "title": "Pilgangoora Operation Technical Report",
+      "project_name": "Pilgangoora",
+      "effective_date": "2025-12-31",
+      "pdf_url": "https://pilbaraminerals.com.au/wp-content/uploads/2025/12/pilgangoora-ni43101.pdf"
+    },
+    "resources": [
+      {
+        "deposit_name": "Pilgangoora",
+        "category": "Indicated",
+        "commodity": "lithium",
+        "ore_tonnage": 120.5,
+        "ore_tonnage_unit": "Mt",
+        "grade": 1.21,
+        "grade_unit": "% Li2O",
+        "contained_metal": null,
+        "contained_metal_unit": null,
+        "page_number": 118,
+        "table_title": "Mineral Resource Estimate - Pilgangoora Lithium-Tantalum Project",
+        "evidence_text": "Indicated Mineral Resources: 120.5 Mt at 1.21% Li2O and 128 ppm Ta2O5",
+        "confidence": 0.92
+      },
+      {
+        "deposit_name": "Pilgangoora",
+        "category": "Inferred",
+        "commodity": "lithium",
+        "ore_tonnage": 46.2,
+        "ore_tonnage_unit": "Mt",
+        "grade": 1.08,
+        "grade_unit": "% Li2O",
+        "contained_metal": null,
+        "contained_metal_unit": null,
+        "page_number": 118,
+        "table_title": "Mineral Resource Estimate - Pilgangoora Lithium-Tantalum Project",
+        "evidence_text": "Inferred Mineral Resources: 46.2 Mt at 1.08% Li2O and 105 ppm Ta2O5",
+        "confidence": 0.90
+      },
+      {
+        "deposit_name": "Pilgangoora",
+        "category": "Indicated",
+        "commodity": "lithium",
+        "ore_tonnage": 28.3,
+        "ore_tonnage_unit": "Mt",
+        "grade": 1.35,
+        "grade_unit": "% Li2O",
+        "contained_metal": null,
+        "contained_metal_unit": null,
+        "page_number": 119,
+        "table_title": "Mineral Resource Estimate - Central Pilgangoora Deposit",
+        "evidence_text": "Indicated: 28.3 Mt at 1.35% Li2O (Central Deposit)",
+        "confidence": 0.88
+      }
+    ],
+    "warnings": [],
+    "status": "success"
+  }
+]

@@ -1,0 +1,35 @@
+[
+  {
+    "article_id": "news_001",
+    "title": "Pilbara Minerals updates FY26 production guidance amid strong spodumene demand",
+    "url": "https://www.mining.com/pilbara-minerals-updates-fy26-production-guidance/",
+    "source_name": "MINING.COM",
+    "published_at": "2026-06-23T02:00:00Z",
+    "snippet": "Pilbara Minerals Ltd has revised its full-year production guidance for the Pilgangoora lithium operation upward by 5%, citing stronger-than-expected spodumene concentrate demand from Chinese battery manufacturers. CEO Dale Henderson noted that the expansion of the P680 project remains on track.",
+    "content": "Pilbara Minerals Ltd (ASX: PLS) has revised its full-year production guidance for the Pilgangoora lithium-tantalum operation upward by approximately 5%, now targeting 700-720kt of spodumene concentrate for FY26.\n\nCEO Dale Henderson said the revision reflects stronger-than-expected demand from Chinese battery manufacturers and improved operational efficiency at the P680 expansion project.\n\n\"We're seeing sustained demand signals from our key offtake partners, particularly in the EV battery supply chain,\" Henderson said. \"The Pilgangoora operation continues to perform above nameplate capacity.\"\n\nThe company's P680 expansion project, which aims to increase annual production capacity to 1Mtpa of spodumene concentrate, is tracking to schedule with first production expected in Q2 FY27.\n\nSpodumene concentrate prices have stabilized around US$1,200/t CIF China, recovering from the lows seen in late 2025. Analysts at Macquarie expect prices to remain range-bound between US$1,100-1,400/t through 2026.\n\nPilbara Minerals shares closed at A$4.25, up 3.2% on the day.",
+    "relevance_score": 0.95,
+    "matched_terms": ["Pilbara", "Minerals", "lithium"]
+  },
+  {
+    "article_id": "news_002",
+    "title": "Western Australia lithium sector faces water access challenges in Pilbara region",
+    "url": "https://www.miningweekly.com/article/wa-lithium-water-challenges-pilbara-2026/",
+    "source_name": "Mining Weekly",
+    "published_at": "2026-06-22T14:30:00Z",
+    "snippet": "The Western Australian government has flagged potential water allocation reviews for mining operations in the Pilbara region, which could impact lithium producers including Pilbara Minerals' Pilgangoora operation and other hard-rock lithium mines.",
+    "content": "The Western Australian Department of Water and Environmental Regulation (DWER) has announced a review of water allocation licenses for mining operations in the Pilbara region, scheduled for completion by December 2026.\n\nThe review could impact several major lithium producers in the region, including Pilbara Minerals' Pilgangoora operation and other hard-rock lithium mines.\n\nDWER Director Sarah Mitchell said the review is part of a broader sustainability assessment. \"We need to balance the growth of the mining sector with long-term water security for the region,\" Mitchell said.\n\nIndustry groups have expressed concern that any reduction in water allocations could constrain production expansion plans. The Association of Mining and Exploration Companies (AMEC) called for a collaborative approach to the review.\n\nPilbara Minerals said in a statement that it is \"engaged with DWER on the review process\" and that its current water usage is well within licensed limits.",
+    "relevance_score": 0.88,
+    "matched_terms": ["Pilbara", "lithium"]
+  },
+  {
+    "article_id": "news_003",
+    "title": "Global lithium supply outlook: Australian producers remain cost-competitive despite price volatility",
+    "url": "https://www.reuters.com/markets/commodities/global-lithium-supply-outlook-2026/",
+    "source_name": "Reuters",
+    "published_at": "2026-06-23T08:15:00Z",
+    "snippet": "Australian hard-rock lithium producers including Pilbara Minerals and IGO maintain cost advantages over South American brine operations despite recent price fluctuations, according to a new Benchmark Mineral Intelligence report.",
+    "content": "Australian hard-rock lithium producers continue to maintain cost advantages over South American brine operations despite recent price volatility, according to a new report from Benchmark Mineral Intelligence.\n\nThe report ranks Pilbara Minerals' Pilgangoora operation and IGO's Greenbushes mine among the lowest-cost spodumene producers globally, with all-in sustaining costs (AISC) below US$500/t.\n\nBenchmark analyst James Price noted that the cost curve has steepened in 2026, with higher-cost Chinese lepidolite producers and some African operations facing margin pressure at current prices.\n\n\"The Australian majors are well-positioned to weather price cycles,\" Price said. \"Their scale, grade, and infrastructure advantages provide a natural buffer.\"\n\nThe report also highlighted growing demand from the energy storage sector, with grid-scale battery deployments expected to drive an additional 150,000t LCE of demand by 2028.",
+    "relevance_score": 0.85,
+    "matched_terms": ["Pilbara", "lithium"]
+  }
+]

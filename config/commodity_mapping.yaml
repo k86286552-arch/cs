@@ -1,0 +1,50 @@
+commodities:
+  lithium:
+    display_name: Lithium
+    aliases:
+      - lithium
+      - li
+      - Li2O
+      - lithium carbonate
+      - 锂
+    benchmarks:
+      - name: configured_lithium_benchmark
+        display: "Lithium Carbonate (China)"
+        currency: CNY
+        unit: tonne
+      - name: lme_lithium_hydroxide
+        display: "LME Lithium Hydroxide"
+        currency: USD
+        unit: tonne
+    grade_units:
+      - "% Li2O"
+      - "ppm Li"
+
+  copper:
+    display_name: Copper
+    aliases:
+      - copper
+      - cu
+      - 铜
+    benchmarks:
+      - name: "LME Copper Official"
+        display: "LME Copper Official"
+        currency: USD
+        unit: tonne
+    grade_units:
+      - "% Cu"
+
+  iron_ore:
+    display_name: Iron Ore
+    aliases:
+      - iron ore
+      - iron
+      - fe
+      - 铁矿石
+    benchmarks:
+      - name: "62% Fe CFR China"
+        display: "62% Fe CFR China"
+        currency: USD
+        unit: tonne
+    grade_units:
+      - "% Fe"

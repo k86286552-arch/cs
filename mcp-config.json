@@ -1,0 +1,61 @@
+{
+  "mcpServers": {
+    "mining-news-mcp": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "D:/mineral-daily-agent/mcp_servers/mining_news",
+        "run",
+        "python",
+        "-m",
+        "app.server"
+      ],
+      "env": {
+        "APP_ENV": "${APP_ENV}",
+        "LOG_LEVEL": "${LOG_LEVEL}",
+        "NEWS_DATA_MODE": "${NEWS_DATA_MODE}"
+      }
+    },
+    "mineral-pdf-mcp": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "D:/mineral-daily-agent/mcp_servers/mineral_pdf",
+        "run",
+        "python",
+        "-m",
+        "app.server"
+      ],
+      "env": {
+        "APP_ENV": "${APP_ENV}",
+        "LOG_LEVEL": "${LOG_LEVEL}",
+        "PDF_DATA_MODE": "${PDF_DATA_MODE}",
+        "LLM_PROVIDER": "${LLM_PROVIDER}",
+        "LLM_API_KEY": "${LLM_API_KEY}",
+        "LLM_MODEL": "${LLM_MODEL}",
+        "LLM_BASE_URL": "${LLM_BASE_URL}"
+      }
+    },
+    "lme-price-mcp": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "D:/mineral-daily-agent/mcp_servers/lme_price",
+        "run",
+        "python",
+        "-m",
+        "app.server"
+      ],
+      "env": {
+        "APP_ENV": "${APP_ENV}",
+        "LOG_LEVEL": "${LOG_LEVEL}",
+        "PRICE_DATA_MODE": "${PRICE_DATA_MODE}",
+        "PRICE_LIVE_BASE_URL": "${PRICE_LIVE_BASE_URL}",
+        "PRICE_LIVE_API_KEY": "${PRICE_LIVE_API_KEY}",
+        "PRICE_LIVE_TIMEOUT_SECONDS": "${PRICE_LIVE_TIMEOUT_SECONDS}",
+        "PRICE_PUBLIC_WEB_ENABLED": "${PRICE_PUBLIC_WEB_ENABLED}",
+        "PRICE_PUBLIC_WEB_TIMEOUT_SECONDS": "${PRICE_PUBLIC_WEB_TIMEOUT_SECONDS}"
+      }
+    }
+  }
+}

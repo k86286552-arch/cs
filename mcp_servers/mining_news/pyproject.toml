@@ -1,0 +1,14 @@
+[project]
+name = "mining-news-mcp"
+version = "0.1.0"
+description = "MCP server for mining news search and article fetching"
+requires-python = ">=3.11"
+dependencies = [
+    "mcp[cli]>=1.0",
+    "pydantic>=2.0",
+    "httpx>=0.27",
+    "feedparser>=6.0",
+    "trafilatura>=1.6",
+    "beautifulsoup4>=4.12",
+    "pyyaml>=6.0",
+]
