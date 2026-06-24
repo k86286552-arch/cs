@@ -37,6 +37,7 @@ PRICE_DATA_MODE=fixture|live
 | live | MINING.COM + Mining Technology RSS | 真实 PDF 下载 + 解析 | TradingEconomics 网页抓取 | 是 |
 
 当前 `.env.example` 默认为 **live 模式**，不需要私有 API。
+要调用真实模型需要到.env里进行配置调用模型API、url、模型名称
 
 ## 网络要求
 
