@@ -1,26 +1,29 @@
-# Mining Daily Brief Agent - 本地运行指南
+# Mining Daily Brief Agent — 运行指南
 
-## 目标
+## 项目简介
 
-这份文档只覆盖本地运行，不包含 Docker 部署。
+矿业每日简报自动生成系统。输入一句自然语言查询，自动汇总新闻、储量、价格数据，输出结构化 Markdown 简报。
 
-当前项目已经可以在本地完成以下链路：
+```text
+给我生成一份关于 Pilbara 锂矿的今日简报
+```
 
-- `mining-news-mcp`：新闻搜索与正文抓取
-- `mineral-pdf-mcp`：真实 PDF 下载与资源量抽取
-- `lme-price-mcp`：真实价格获取
-- `daily_agent`：汇总新闻、资源量、价格并输出 Markdown 简报
+输出包含 6 个章节：结论摘要、新闻摘要、储量数据、价格走势、风险提示、引用源链接。
+
+技术架构详见 [docs/architecture.md](docs/architecture.md)。
 
 ## 环境要求
 
-- Python 3.11+
-- `uv`
-- Node.js 18+
-  仅在使用 MCP Inspector 时需要
+| 依赖 | 用途 | 安装 |
+|------|------|------|
+| Docker Desktop | Docker 方式运行（推荐） | `winget install Docker.DockerDesktop` |
+| Python 3.11+ | 本地方式运行 | — |
+| uv | 本地方式的包管理 | `winget install astral-sh.uv` |
+| Node.js 18+ | 仅 MCP Inspector 调试时需要 | — |
 
-## 运行模式
+## 数据模式
 
-通过 `.env` 统一控制三类数据源：
+通过 `.env` 统一控制三个数据源的模式：
 
 ```env
 NEWS_DATA_MODE=fixture|live
@@ -28,102 +31,53 @@ PDF_DATA_MODE=fixture|live
 PRICE_DATA_MODE=fixture|live
 ```
 
-推荐用法：
+| 模式 | 新闻 | 储量 | 价格 | 需要网络 |
+|------|------|------|------|---------|
+| fixture | `data/fixtures/news.json` | `data/fixtures/resources.json` | `data/fixtures/prices.csv` | 否 |
+| live | MINING.COM + Mining Technology RSS | 真实 PDF 下载 + 解析 | TradingEconomics 网页抓取 | 是 |
 
-- 本地快速演示：三个都用 `fixture`
-- 半真实演示：`NEWS_DATA_MODE=live`、`PDF_DATA_MODE=live`、`PRICE_DATA_MODE=live`
-- 调试单个模块：只切换目标模块为 `live`
+当前 `.env.example` 默认为 **live 模式**，不需要私有 API。
 
-说明：
+## 网络要求
 
-- `NEWS_DATA_MODE=live` 会真实抓 RSS 和文章正文
-- `PDF_DATA_MODE=live` 会真实下载 PDF 并抽取资源量
-- `PRICE_DATA_MODE=live` 会优先调用私有价格 API；如果未配置，则回退到公开价格网页抓取
+live 模式依赖公开网站抓取。如果需要代理：
 
-## 5 分钟快速启动
+**本地运行**：
 
-### 1. 准备环境变量
+```powershell
+$env:HTTP_PROXY='http://127.0.0.1:7897'
+$env:HTTPS_PROXY='http://127.0.0.1:7897'
+```
+
+**Docker 运行**：在 `.env` 中添加：
+
+```env
+HTTP_PROXY=http://host.docker.internal:7897
+HTTPS_PROXY=http://host.docker.internal:7897
+```
+
+`httpx` 会自动读取这两个环境变量。
+
+---
+
+## 快速启动
+
+### 方式 1：Docker（推荐）
 
 ```powershell
 cd D:\mineral-daily-agent
-copy .env.example .env
+copy .env.example .env          # 按需编辑代理等配置
+docker compose up -d            # 首次构建约 3-5 分钟
 ```
 
-建议先用下面这份最小配置：
+启动后：
 
-```env
-APP_ENV=development
-LOG_LEVEL=INFO
+| 地址 | 说明 |
+|------|------|
+| http://127.0.0.1:8000/docs | Swagger API 文档 |
+| http://127.0.0.1:8000/api/v1/health | 健康检查 |
 
-LLM_PROVIDER=openai
-LLM_API_KEY=
-LLM_MODEL=gpt-4o-mini
-LLM_BASE_URL=
-
-NEWS_DATA_MODE=fixture
-PDF_DATA_MODE=fixture
-PRICE_DATA_MODE=fixture
-
-PRICE_LIVE_BASE_URL=
-PRICE_LIVE_API_KEY=
-PRICE_LIVE_TIMEOUT_SECONDS=30
-PRICE_PUBLIC_WEB_ENABLED=1
-PRICE_PUBLIC_WEB_TIMEOUT_SECONDS=30
-```
-
-说明：
-
-- 不填 `LLM_API_KEY` 也能跑完整流程
-- 未配置 LLM 时，PDF 结构化和报告摘要会使用降级逻辑
-- `PRICE_PUBLIC_WEB_ENABLED=1` 时，价格服务可直接抓公开 commodity 页面
-- 如果你有自己的价格接口，再补 `PRICE_LIVE_BASE_URL` 和 `PRICE_LIVE_API_KEY`
-
-### 2. 安装依赖
-
-```powershell
-uv sync
-uv --directory ./mcp_servers/lme_price sync
-uv --directory ./mcp_servers/mining_news sync
-uv --directory ./mcp_servers/mineral_pdf sync
-uv --directory ./apps/daily_agent sync
-```
-
-### 3. 跑 smoke test
-
-```powershell
-uv run python scripts/smoke_test.py
-```
-
-预期结果：
-
-- 能发现 3 个 MCP Server
-- 能完成 3 次 `tools/call`
-- 输出 `Overall: ALL PASSED`
-
-### 4. 跑 Agent CLI
-
-```powershell
-uv --directory ./apps/daily_agent run python -m app.cli "给我生成一份关于 Pilbara 锂矿的今日简报"
-```
-
-输出结果：
-
-- 终端打印 Markdown 简报
-- 同时保存到 `data/reports/`
-
-### 5. 跑 Agent API
-
-```powershell
-uv --directory ./apps/daily_agent run uvicorn app.main:app --host 127.0.0.1 --port 8000
-```
-
-接口文档：
-
-```text
-http://127.0.0.1:8000/docs
-```
-
-请求示例：
+生成简报：
 
 ```powershell
 curl -X POST http://127.0.0.1:8000/api/v1/briefs ^
@@ -131,27 +85,76 @@ curl -X POST http://127.0.0.1:8000/api/v1/briefs ^
   -d "{\"query\":\"给我生成一份关于 Pilbara 锂矿的今日简报\",\"news_days\":1,\"price_days\":30}"
 ```
 
+报告持久化到宿主机 `data/reports/` 目录（通过 volume 挂载）。
+
+停止：
+
+```powershell
+docker compose down
+```
+
+重新构建（代码有改动后）：
+
+```powershell
+docker compose up -d --build
+```
+
+### 方式 2：本地直接运行
+
+#### 1. 准备配置
+
+```powershell
+cd D:\mineral-daily-agent
+copy .env.example .env
+```
+
+#### 2. 安装依赖
+
+```powershell
+uv sync
+uv --directory ./mcp_servers/mining_news sync
+uv --directory ./mcp_servers/mineral_pdf sync
+uv --directory ./mcp_servers/lme_price sync
+uv --directory ./apps/daily_agent sync
+```
+
+#### 3. 冒烟测试
+
+```powershell
+uv run python scripts/smoke_test.py
+```
+
+预期输出：发现 3 个 MCP Server、完成 3 次 `tools/call`、`Overall: ALL PASSED`。
+
+#### 4. 跑 Agent CLI
+
+```powershell
+uv --directory ./apps/daily_agent run python -m app.cli "给我生成一份关于 Pilbara 锂矿的今日简报"
+```
+
+终端输出 Markdown 简报，同时保存到 `data/reports/`。
+
+#### 5. 跑 Agent API
+
+```powershell
+uv --directory ./apps/daily_agent run uvicorn app.main:app --host 127.0.0.1 --port 8000
+```
+
+Swagger 文档：http://127.0.0.1:8000/docs
+
+---
+
 ## 单独验证 MCP Server
 
-### 新闻服务
+每个 MCP Server 可独立启动（stdio 模式）：
 
 ```powershell
-uv --directory ./mcp_servers/mining_news run python -m app.server
+uv --directory ./mcp_servers/mining_news run python -m app.server    # 新闻
+uv --directory ./mcp_servers/mineral_pdf run python -m app.server    # PDF
+uv --directory ./mcp_servers/lme_price run python -m app.server      # 价格
 ```
 
-### PDF 服务
-
-```powershell
-uv --directory ./mcp_servers/mineral_pdf run python -m app.server
-```
-
-### 价格服务
-
-```powershell
-uv --directory ./mcp_servers/lme_price run python -m app.server
-```
-
-### 用 MCP Inspector 验证
+用 MCP Inspector 调试（需要 Node.js）：
 
 ```powershell
 npx @modelcontextprotocol/inspector uv --directory ./mcp_servers/lme_price run python -m app.server
@@ -159,74 +162,69 @@ npx @modelcontextprotocol/inspector uv --directory ./mcp_servers/lme_price run p
 
 ## Claude Desktop / Cursor 接入
 
-把 [mcp-config.json](D:/mineral-daily-agent/mcp-config.json) 的内容复制到：
+项目提供了 `mcp-config.json`，包含三个 MCP Server 的配置。
 
-- Claude Desktop：`%APPDATA%\Claude\claude_desktop_config.json`
-- Cursor：`Settings -> MCP Servers`
+使用方式：
 
-当前 `mcp-config.json` 已支持：
+- **Claude Desktop**：复制内容到 `%APPDATA%\Claude\claude_desktop_config.json`
+- **Cursor**：粘贴到 `Settings → MCP Servers`
 
-- `NEWS_DATA_MODE`
-- `PDF_DATA_MODE`
-- `PRICE_DATA_MODE`
-- `LLM_*`
-- `PRICE_LIVE_*`
-- `PRICE_PUBLIC_WEB_*`
+注意：配置中的路径是 `D:/mineral-daily-agent/...`，克隆到其他目录时需替换。
 
-## 当前真实数据链路
+---
 
-### Pilbara 资源量文档
+## 已验证的 live 链路
 
-当前项目已切到可访问的官方文档：
+### 新闻
 
-- `https://pls.com/wp-content/uploads/2025/08/2025AnnualReportincorporatingAppendix4E.pdf`
+当前 RSS 源：
 
-当前 live 抽取已能从该文档第 32 页提取出：
+- MINING.COM — `https://www.mining.com/feed/`
+- Mining Technology — `https://www.mining-technology.com/feed/`
 
-- `Indicated 349.0 Mt @ 1.29 % Li2O`
-- `Inferred 70.0 Mt @ 1.25 % Li2O`
+搜索后对命中文章用 trafilatura 抓取正文。
 
-### 价格 live 模式
+空结果自动回退：如果 `news_days=1` 无结果，自动扩展到 3 天，再无结果扩展到 7 天。
 
-`PRICE_DATA_MODE=live` 时的优先顺序：
+### PDF / 储量
 
-1. 私有价格 API
-2. 公开价格网页抓取
+Pilbara 已验证的公开 PDF：
 
-公开网页抓取当前已验证可用：
-
-- Lithium
-- Copper
-- Nickel
-
-说明：
-
-- 当前“最新价格”是真实网页抓取
-- 当前“价格趋势”是根据公开网页摘要重建的近似结果，不是完整历史 API 序列
-
-## 已验证命令
-
-### 全本地 fixture
-
-```powershell
-uv run python scripts/smoke_test.py
+```
+https://pls.com/wp-content/uploads/2025/08/2025AnnualReportincorporatingAppendix4E.pdf
 ```
 
-### 真实价格 + 真实 PDF + fixture 新闻
+live 抽取结果：
 
-```powershell
-$env:APP_ENV='production'
-$env:NEWS_DATA_MODE='fixture'
-$env:PDF_DATA_MODE='live'
-$env:PRICE_DATA_MODE='live'
-$env:PRICE_PUBLIC_WEB_ENABLED='1'
-uv --directory ./apps/daily_agent run python -m app.cli "给我生成一份关于 Pilbara 锂矿的今日简报"
+- Indicated 349.0 Mt @ 1.29 % Li2O
+- Inferred 70.0 Mt @ 1.25 % Li2O
+
+提取流程：表格解析 → 正文正则 → LLM 结构化（三级降级）。
+
+### 价格
+
+公开网页源：`https://tradingeconomics.com/commodity/lithium`
+
+可获取：最新价格快照 + 近 30 天趋势重建。趋势为基于网页摘要的近似值，非完整历史序列。
+
+支持的矿种：copper、nickel、zinc、lithium_carbonate、iron_ore。
+
+### 输出示例
+
+报告中的引用带真实链接：
+
+```markdown
+- [R1] Technical Report p.32 — https://pls.com/.../2025AnnualReport...pdf
+- [P1] 2026-06-23 lithium_carbonate, CNY/tonne — https://tradingeconomics.com/commodity/lithium
 ```
 
-### 半真实全链路
+---
+
+## 运行模式参考命令
+
+### 全链路 live
 
 ```powershell
-$env:APP_ENV='production'
 $env:NEWS_DATA_MODE='live'
 $env:PDF_DATA_MODE='live'
 $env:PRICE_DATA_MODE='live'
@@ -234,27 +232,33 @@ $env:PRICE_PUBLIC_WEB_ENABLED='1'
 uv --directory ./apps/daily_agent run python -m app.cli "给我生成一份关于 Pilbara 锂矿的今日简报"
 ```
 
+### 纯 fixture 快速演示
+
+```powershell
+$env:NEWS_DATA_MODE='fixture'
+$env:PDF_DATA_MODE='fixture'
+$env:PRICE_DATA_MODE='fixture'
+uv --directory ./apps/daily_agent run python -m app.cli "给我生成一份关于 Pilbara 锂矿的今日简报"
+```
+
+---
+
+## 已知限制
+
+- 价格趋势来自公开网页摘要重建，不是交易所完整历史 API
+- 新闻 live 受 RSS 更新频率影响，某些天可能为空（会自动扩展到 7 天）
+- PDF 抽取对 Pilbara 年报版式效果最好，其他公司版式可能不稳定
+- 外网受限时必须配置代理，否则 live 模式会失败
+
 ## 常见问题
 
-| 问题 | 处理方式 |
-| --- | --- |
-| `uv` 不存在 | 安装 `uv`，例如 `winget install astral-sh.uv` |
-| `smoke_test.py` 失败 | 先执行根目录和各子项目的 `uv sync` |
-| Agent 连不上 MCP | 不要手动先起服务，Agent 会通过 stdio 自动拉起 |
-| 新闻 live 没结果 | 先确认最近 1 天内是否真的有相关公开新闻，可调大 `news_days` |
-| PDF live 没结果 | 先确认 URL 可访问，再检查目标文档是否包含资源量表 |
-| 价格 live 报不可用 | 先确认 `PRICE_PUBLIC_WEB_ENABLED=1` 或补齐私有价格 API 配置 |
-| 报告里价格趋势带“近似结果” | 这是当前公开网页抓取模式的正常行为，不是报错 |
-
-## 当前已知限制
-
-- 价格趋势不是完整历史 API，只是公开网页摘要重建
-- PDF 抽取目前已适配 Pilbara 年报版式，但还不是通用多公司版式引擎
-- `fixture` 仍然保留，用于无外部依赖时的稳定演示
-
-## 建议演示顺序
-
-1. 先跑 `smoke_test.py`
-2. 再跑 Agent CLI
-3. 最后打开 FastAPI `/docs`
-4. 如果需要，再用 Claude Desktop / Cursor 挂载 `mcp-config.json`
+| 问题 | 处理 |
+|------|------|
+| `uv` 不存在 | `winget install astral-sh.uv` |
+| `docker` 不存在 | `winget install Docker.DockerDesktop`，安装后重启 |
+| smoke test 失败 | 确认已执行所有 `uv sync` |
+| live 没有新闻 | 确认代理生效 + 最近是否有相关新闻；可调大 `news_days` |
+| live 没有价格 | 确认 `PRICE_DATA_MODE=live` + `PRICE_PUBLIC_WEB_ENABLED=1` + 代理可访问 tradingeconomics.com |
+| live 没有储量 | 确认 PDF URL 可访问 + 代理正常 |
+| Docker 构建慢 | 首次需下载依赖，后续构建有缓存；也可用 `docker compose up -d --build` 强制重建 |
+| Docker 内无法访问外网 | 在 `.env` 中加 `HTTP_PROXY=http://host.docker.internal:端口` |

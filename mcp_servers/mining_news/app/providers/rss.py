@@ -10,7 +10,7 @@ import httpx
 
 RSS_FEEDS = [
     {"name": "MINING.COM", "url": "https://www.mining.com/feed/"},
-    {"name": "Mining Weekly", "url": "https://www.miningweekly.com/page/rss"},
+    {"name": "Mining Technology", "url": "https://www.mining-technology.com/feed/"},
 ]
 
 HEADERS = {"User-Agent": "MineralDailyAgent/0.1 (research-bot)"}

@@ -105,6 +105,7 @@ class GetPriceOutput(BaseModel):
     unit: str = "tonne"
     price_type: str = "official_close"
     source: str = "fixture"
+    source_url: str | None = None
     is_delayed: bool = False
     is_demo: bool = False
     warnings: list[str] = []
@@ -135,5 +136,6 @@ class GetTrendOutput(BaseModel):
     unit: str = "tonne"
     points: list[TrendPoint]
     source: str = "fixture"
+    source_url: str | None = None
     is_demo: bool = False
     warnings: list[str] = []

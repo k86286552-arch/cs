@@ -9,6 +9,7 @@ from pathlib import Path
 from app.providers.base import PriceProvider
 
 FIXTURE_DIR = Path(__file__).resolve().parents[4] / "data" / "fixtures"
+FIXTURE_SOURCE = str((FIXTURE_DIR / "prices.csv").relative_to(FIXTURE_DIR.parents[0])) if (FIXTURE_DIR / "prices.csv").exists() else None
 
 BUILTIN_COMMODITIES: dict[str, dict] = {
     "lithium_carbonate": {
@@ -76,6 +77,7 @@ class CsvFixtureProvider(PriceProvider):
             "unit": spec["unit"],
             "price_type": "official_close",
             "source": "fixture",
+            "source_url": FIXTURE_SOURCE,
             "is_delayed": False,
             "is_demo": True,
             "warnings": ["Demo fixture data is being used."],
@@ -95,6 +97,7 @@ class CsvFixtureProvider(PriceProvider):
                         "unit": row.get("unit", "tonne"),
                         "price_type": "official_close",
                         "source": "fixture",
+                        "source_url": FIXTURE_SOURCE,
                         "is_delayed": False,
                         "is_demo": True,
                         "warnings": ["Demo fixture data is being used."],
@@ -109,6 +112,7 @@ class CsvFixtureProvider(PriceProvider):
                 "unit": closest.get("unit", "tonne"),
                 "price_type": "official_close",
                 "source": "fixture",
+                "source_url": FIXTURE_SOURCE,
                 "is_delayed": False,
                 "is_demo": True,
                 "warnings": ["Demo fixture data is being used.", f"Closest available date: {closest['date']}"],
@@ -152,6 +156,7 @@ class CsvFixtureProvider(PriceProvider):
             "unit": spec.get("unit", "tonne"),
             "points": points,
             "source": "fixture",
+            "source_url": FIXTURE_SOURCE,
             "is_demo": True,
             "warnings": ["Demo fixture data is being used."],
         }

@@ -1,0 +1,11 @@
+services:
+  daily-agent:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./data/reports:/app/data/reports
+      - ./data/cache:/app/data/cache
+    restart: unless-stopped

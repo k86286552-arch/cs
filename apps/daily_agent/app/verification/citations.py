@@ -18,6 +18,8 @@ def verify_citations(markdown: str, evidence: list[dict]) -> list[str]:
         etype = e.get("evidence_type", "")
         if etype == "news" and not e.get("source_url"):
             issues.append(f"[{eid}] News evidence missing source URL.")
+        if etype == "resource" and not e.get("source_url"):
+            issues.append(f"[{eid}] Resource evidence missing source URL.")
         if etype == "resource" and not e.get("page_number"):
             issues.append(f"[{eid}] Resource evidence missing page number.")
         if etype == "price":
@@ -26,5 +28,7 @@ def verify_citations(markdown: str, evidence: list[dict]) -> list[str]:
                 issues.append(f"[{eid}] Price evidence missing date.")
             if not meta.get("currency"):
                 issues.append(f"[{eid}] Price evidence missing currency.")
+            if meta.get("source") != "fixture" and not e.get("source_url"):
+                issues.append(f"[{eid}] Non-fixture price evidence missing source URL.")
 
     return issues

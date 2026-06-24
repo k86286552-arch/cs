@@ -71,8 +71,8 @@ class LivePriceProvider(PriceProvider):
 
     def __init__(self) -> None:
         self.providers: list[PriceProvider] = [
-            HttpApiPriceProvider(),
             TradingEconomicsWebProvider(),
+            HttpApiPriceProvider(),
         ]
 
     def is_configured(self) -> bool:

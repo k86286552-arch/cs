@@ -156,6 +156,10 @@ def _build_resource_section(evidence: list[dict], rows: list[dict], status: str)
         page = str(row.get("page_number", "-") or "-")
         lines.append(f"| {row.get('category', '-')} | {tonnage} | {grade} | {contained} | {page} | {eid} |")
 
+    source_url = next((e.get("source_url") for e in evidence if e.get("source_url")), None)
+    if source_url:
+        lines.append(f"\n来源原文: {source_url}")
+
     return "\n".join(lines)
 
 
@@ -173,6 +177,8 @@ def _build_price_section(evidence: list[dict], trend: dict | None, price: dict |
         )
         lines.append(f"- 区间最低: {trend.get('min_price', '-')} / 最高: {trend.get('max_price', '-')}")
         lines.append(f"- 数据源: {trend.get('source', 'unknown')}")
+        if trend.get("source_url"):
+            lines.append(f"- 来源链接: {trend.get('source_url')}")
         if trend.get("is_estimated"):
             lines.append("- 注记: 该价格趋势为基于公开网页摘要重建的近似结果，并非完整历史行情序列")
         if trend.get("is_demo"):
@@ -183,6 +189,8 @@ def _build_price_section(evidence: list[dict], trend: dict | None, price: dict |
             f"({price.get('date', '')})"
         )
         lines.append(f"- 数据源: {price.get('source', 'unknown')}")
+        if price.get("source_url"):
+            lines.append(f"- 来源链接: {price.get('source_url')}")
     else:
         lines.append("- 暂无可用价格数据。")
 
@@ -215,7 +223,11 @@ def _build_citation_section(evidence: list[dict]) -> str:
             lines.append(f"- [{eid}] {e.get('title', '')} — {url}")
         elif etype == "resource":
             page = e.get("page_number", "?")
-            lines.append(f"- [{eid}] Technical Report p.{page}")
+            url = e.get("source_url", "")
+            if url:
+                lines.append(f"- [{eid}] Technical Report p.{page} — {url}")
+            else:
+                lines.append(f"- [{eid}] Technical Report p.{page}")
         elif etype == "price":
             meta = e.get("metadata", {})
             date_text = meta.get("date", "")
@@ -227,8 +239,10 @@ def _build_citation_section(evidence: list[dict]) -> str:
                     date_text = f"{start} to {end}"
                 else:
                     date_text = end or start or "date unavailable"
-            lines.append(
+            base_text = (
                 f"- [{eid}] {date_text} {meta.get('commodity', '')}, "
                 f"{meta.get('currency', '')}/{meta.get('unit', '')}"
             )
+            url = e.get("source_url", "")
+            lines.append(f"{base_text} — {url}" if url else base_text)
     return "\n".join(lines) if lines else "- 无引用。"

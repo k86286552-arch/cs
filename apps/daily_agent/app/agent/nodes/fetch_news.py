@@ -26,36 +26,54 @@ async def fetch_news(state: DailyBriefState, mcp_manager) -> dict:
     warnings: list[dict] = []
     had_error = False
 
-    for query in queries:
-        try:
-            result = await mcp_manager.call_tool(
-                "mining-news-mcp",
-                "search",
-                {"query": query, "days": days, "limit": limit},
-            )
-            if "error_code" in result:
-                logger.warning("News search error: %s", result.get("message"))
+    async def _run_search(pass_days: int) -> None:
+        nonlocal had_error
+        for query in queries:
+            try:
+                result = await mcp_manager.call_tool(
+                    "mining-news-mcp",
+                    "search",
+                    {"query": query, "days": pass_days, "limit": limit},
+                )
+                if "error_code" in result:
+                    logger.warning("News search error: %s", result.get("message"))
+                    had_error = True
+                    warnings.append({
+                        "component": "news",
+                        "query": query,
+                        "message": result.get("message", "News search failed."),
+                    })
+                    continue
+
+                for item in result.get("items", []):
+                    url = item.get("url", "")
+                    if url not in seen_urls:
+                        seen_urls.add(url)
+                        all_items.append(item)
+            except Exception as exc:
+                logger.error("News search failed for '%s': %s", query, exc)
                 had_error = True
                 warnings.append({
                     "component": "news",
                     "query": query,
-                    "message": result.get("message", "News search failed."),
+                    "message": f"News search failed: {exc}",
                 })
-                continue
 
-            for item in result.get("items", []):
-                url = item.get("url", "")
-                if url not in seen_urls:
-                    seen_urls.add(url)
-                    all_items.append(item)
-        except Exception as exc:
-            logger.error("News search failed for '%s': %s", query, exc)
-            had_error = True
-            warnings.append({
-                "component": "news",
-                "query": query,
-                "message": f"News search failed: {exc}",
-            })
+    await _run_search(days)
+
+    if not all_items and not had_error and days < 3:
+        warnings.append({
+            "component": "news",
+            "message": "No news found in the requested window; automatically retried with a 3-day window.",
+        })
+        await _run_search(3)
+
+    if not all_items and not had_error and days < 7:
+        warnings.append({
+            "component": "news",
+            "message": "No news found in the 3-day window; automatically retried with a 7-day window.",
+        })
+        await _run_search(7)
 
     all_items.sort(key=lambda x: x.get("relevance_score", 0), reverse=True)
 
